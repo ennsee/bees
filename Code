@@ -31,7 +31,7 @@ summary(bee_data)
 
 ```
 
-## Function to help read and preprocess images
+## Function to help read and preprocess images if needed
 
 ```{r}
 
