@@ -1,1 +1,108 @@
-#Code for project
+# R Code for project
+
+## Before running the install_keras() I installed
+## Andaconda3 on my computer 
+
+```{r}
+install.packages("keras")
+install.packages("readr")
+install.packages("imager")
+install.packages("magick")
+install.packages("tidyverse")
+library("keras")
+library("readr")
+library("imager")
+library("magick")
+library("tidyverse")
+install_keras()
+```
+
+## Loading and viewing the data
+
+```{r}
+setwd("~/Capstone")
+getwd()
+bee_data <- read_csv("bee_data.csv", col_types = cols(date = col_date(format = "%D"),
+time = col_time(format = "%H:%M")))
+View(bee_data)
+head(bee_data)
+summary(bee_data)
+ 
+
+```
+
+## Function to help read and preprocess images
+
+```{r}
+
+image_prep <- function(x) {
+  arrays <- lapply(x, function(path) {
+    img <- image_load(path, target_size = c(224, 224))
+    x <- image_to_array(img)
+    x <- array_reshape(x, c(1, dim(x)))
+    x <- imagenet_preprocess_input(x)
+  })
+  do.call(abind::abind, c(arrays, list(along = 1)))
+}
+
+```
+
+### Input images
+
+```{r}
+Image_folder <- "C:/Users/ncarp/Documents/Capstone/BeeImages"
+names <- list.files(Image_folder)
+
+```
+
+### Image size (to make sure each image is the same size)
+
+```{r}
+img_width <- 100
+img_height <- 100
+target_size <- c(img_width, img_height)
+
+```
+
+## RGB = 3 channels
+```{r}
+channels <- 3
+```
+
+### Path to image training and validation folders
+
+```{r}
+train_image_files_path<-"C:/Users/ncarp/Documents/Capstone/Training/"
+validation_image_file_path<-"C:/Users/ncarp/Documents/Capstone/Validation/"
+```
+
+### load training images
+
+```{r}
+
+train_image_array_gen <- flow_images_from_directory(train_image_files_path, 
+                                          train_data_gen,
+                                          target_size = target_size,
+                                          class_mode = "categorical",
+                                          classes = health,
+                                          seed = 42)
+
+valid_image_array_gen <- flow_images_from_directory(valid_image_files_path, 
+                                          valid_data_gen,
+                                          target_size = target_size,
+                                          class_mode = "categorical",
+                                          classes = health,
+                                          seed = 42)
+
+cat("Number of images per class:")
+table(factor(train_image_array_gen$classes))
+cat("\nClass label vs index mapping:\n")
+train_image_array_gen$class_indices
+health_classes_indices <- train_image_array_gen$class_indices
+save(health_classes_indices, file = "C:/Users/ncarp/Documents/Capstone/health_classes_indices.RData")
+```
+
+
+
+
+
