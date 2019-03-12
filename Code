@@ -87,7 +87,7 @@ train_image_array_gen <- flow_images_from_directory(train_image_files_path,
                                           classes = health,
                                           seed = 42)
 
-valid_image_array_gen <- flow_images_from_directory(valid_image_files_path, 
+validation_image_array_gen <- flow_images_from_directory(validation_image_files_path, 
                                           valid_data_gen,
                                           target_size = target_size,
                                           class_mode = "categorical",
